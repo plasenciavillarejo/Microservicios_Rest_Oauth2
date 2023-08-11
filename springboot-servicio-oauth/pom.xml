@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.14</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.formacionbdi.springboot.app.oauth</groupId>
+	<artifactId>springboot-servicio-oauth</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>springboot-servicio-oauth</name>
+	<description>Proyecto encargado de tener todas las entidad y dependencias de el proyeccto servicio-usuarios y el jwt con oauth2</description>
+	
+	<properties>
+		<java.version>11</java.version>
+		<spring-cloud.version>2021.0.8</spring-cloud.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		
+		<!-- Con está dependencia no es necesario anotar el main con @EnableEurekaClient para indicar que es un cliente de eureka, si no que ya lo hace forma indirecta -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- INI - Dependencias necesarias para Spring Security utilizando JWT -->
+		<!-- ################################################################# -->
+
+		<!-- A partir de la versíon 2.3.8.RELEASE se elimina la generación de el token, entonces si queremos aumentar la versión deberemos de trabajar con otra dependencia externa a spring boot -->
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+    		<artifactId>spring-security-oauth2</artifactId>
+    		<version>2.3.8.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-jwt</artifactId>
+    		<version>1.1.1.RELEASE</version>
+		</dependency>
+				
+		<!-- Está dependencia es necesaría si se está utilizando java 11 en adelante, ya que el propio java no la tiene ya integrada -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+    		<artifactId>jaxb-runtime</artifactId>
+		</dependency>
+		
+		<!-- FIN - Dependencias necesarias para Spring Security utilizando JWT -->
+		<!-- #################################################################-->
+		
+		<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+		
+		<!-- Dependencias a shared library -->
+		<!-- ############################# -->
+		<!-- Exlucimos Jpa ya que no lo vamos a utilizar dentro de este proyecto -->
+		<dependency>
+			<groupId>com.formacionbdi.springboot.app.usuarios.commons</groupId>
+			<artifactId>springboot-servicio-usuarios-commons</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-data-jpa</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+	</dependencies>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin> 
+		</plugins>
+	</build>
+
+</project>

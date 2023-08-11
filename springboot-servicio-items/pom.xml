@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<!-- Cambiamos de versión para poder utilizar el balanceador de cargar Ribbon compatible hasta la version 2.3X 
+			La versión 2.4.X hacia adelante no es comptible con Ribbon
+		<version>2.3.12.RELEASE</version>
+		-->
+		<!-- Versióni compatible con Resilience4j (Circuit Breaker) -->
+		<version>2.7.14</version>
+		
+		<relativePath/>
+	</parent>
+	
+	<groupId>com.formacionbdi.springboot.app.item</groupId>
+	<artifactId>springboot-servicio-items</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>springboot-servicio-items</name>
+	<description>Demo project for Spring Boot</description>
+	
+	<properties>
+		<!--<java.version>17</java.version>-->
+		<java.version>11</java.version>
+		
+		<!-- <spring-cloud.version>2022.0.3</spring-cloud.version> -->
+		<!-- Se cambia versión para adaptarlo a la versión de spring 2.3.12.RELEASE 
+		<spring-cloud.version>Hoxton.SR12</spring-cloud.version> -->
+		<spring-cloud.version>2021.0.3</spring-cloud.version>
+		
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Dependencia necesaria para cambiar el RestTemplate por Feign -->
+		<!-- ############################################################ -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		
+		<!-- Al utilizar EUREKA Client se excluye ribbon
+		<dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+		</dependency>
+		-->
+		
+		<!-- Para Registrar un cliente en un proyeco EUREKA tenemos que añadir la dependencia Eureka Discovery -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+	
+		<!-- Está dependencia solo está disponible para Spring-boot 2.3 hacía abajo para versiónes superiores se utiliza Resilence 
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+		</dependency>
+		-->
+		
+		<!-- hystrix en la versión de spring 2.4.X en adelante es sustituida por 'spring-cloud-starter-circuitbreaker-resilience4j' -->	
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+		</dependency>
+		
+		<!-- Dependencia que necesitaremos cuando trabajemos con el servidor de configuraciones, en versiones actuales necesita de está dependencia
+			Utilizaremos un fichero bootstrap.properties y para habilitar dicho archivo requiere de está dependencia -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
+		</dependency>
+		
+		<!-- Cliente para el microservicio config-server -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		
+		<!-- Dependencia para que se pueda actualizar en caliente cualqueir configuración sin necesidad de 
+		cargar la aplicación de nuevo -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<!-- Dependencias a shared library -->
+		<!-- ############################# -->
+		<dependency>
+			<groupId>com.formacionbdi.springboot.app.shared.library</groupId>
+			<artifactId>springboot-servicio-shared-library</artifactId>
+			<version>0.0.1-SNAPSHOT</version>		
+		</dependency>
+		
+	</dependencies>	
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin>
+			
+		</plugins>
+	</build>
+	
+	<!-- Dependencia necesaria para cambiar el RestTemplate por Feign -->
+	<!-- ############################################################ -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
