@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.formacionbdi.springboot.app.oauth.services.IUsuarioService;
 import com.formacionbdi.springboot.app.usuarios.commons.models.entity.Usuario;
 
+import brave.Tracer;
 import feign.FeignException;
 
 @Component
@@ -23,6 +24,10 @@ public class AuthenticationSuccessErrorHandler implements AuthenticationEventPub
 		
 	@Autowired
 	private IUsuarioService usuarioService;
+	
+	// Procedemos añadir trazas al span de zipkin -> brave.Tracer 
+	@Autowired
+	private Tracer tracer;
 	
 	@Override
 	public void publishAuthenticationSuccess(Authentication authentication) {
@@ -50,9 +55,13 @@ public class AuthenticationSuccessErrorHandler implements AuthenticationEventPub
 
 	@Override
 	public void publishAuthenticationFailure(AuthenticationException exception, Authentication authentication) {
-		LOGGER.error("Error Login: {}", exception.getMessage());
+		String mensajeError = "Error Login: " + exception.getMessage();
+		LOGGER.error(mensajeError);
 		
 		try {
+			StringBuilder errors = new StringBuilder();
+			errors.append(mensajeError);
+			
 			Usuario usuario = usuarioService.findByUsername(authentication.getName());
 			if(usuario.getIntentos() == null) {
 				usuario.setIntentos(0);
@@ -60,11 +69,20 @@ public class AuthenticationSuccessErrorHandler implements AuthenticationEventPub
 			LOGGER.info("Intento actual es de: {}", usuario.getIntentos());
 			usuario.setIntentos(usuario.getIntentos()+1);
 			LOGGER.info("Intento después es de: {}", usuario.getIntentos());
+			
+			errors.append(" - Intento después de login: " + usuario.getIntentos());
+			
 			if(usuario.getIntentos() >= 3) {
-				LOGGER.error(String.format("El usuario %s deshabilitado por máximo intentos", usuario.getUsername()));
+				String errorMaxIntentos = String.format("El usuario %s deshabilitado por máximo intentos", usuario.getUsername());
+				LOGGER.error(errorMaxIntentos);
+				errors.append(" - " + errorMaxIntentos);
 				usuario.setEnabled(false);
 			}
 			usuarioService.update(usuario, usuario.getId());
+			
+			// Traza span para zipkin
+			tracer.currentSpan().tag("error.mensaje", errors.toString());
+			
 		}catch (FeignException e) {
 			LOGGER.error(String.format("El usuario %s no existe en el sistema", authentication.getName()));
 		}

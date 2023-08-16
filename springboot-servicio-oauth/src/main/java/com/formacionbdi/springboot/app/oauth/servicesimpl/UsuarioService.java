@@ -18,6 +18,7 @@ import com.formacionbdi.springboot.app.oauth.clients.IUsuarioFeignClient;
 import com.formacionbdi.springboot.app.oauth.services.IUsuarioService;
 import com.formacionbdi.springboot.app.usuarios.commons.models.entity.Usuario;
 
+import brave.Tracer;
 import feign.FeignException;
 
 /* Implementa la interfaz propia de spring security que contiene un método para loguear al usuario desde el username.
@@ -30,6 +31,10 @@ public class UsuarioService implements UserDetailsService, IUsuarioService{
 	
 	@Autowired
 	private IUsuarioFeignClient clienteFeign;
+	
+	// Procedemos añadir trazas al span de zipkin -> brave.Tracer 
+	@Autowired
+	private Tracer tracer;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -53,8 +58,13 @@ public class UsuarioService implements UserDetailsService, IUsuarioService{
 		return new User(usuario.getUsername(), usuario.getPassword(), usuario.getEnabled(), true, true, true, authorities);
 		
 		}catch (FeignException e) {
-			LOGGER.error("Error en el login, no existe el usario '"+username+"' en el sistema");
-			throw new UsernameNotFoundException("Error en el login, no existe el usario '"+username+"' en el sistema");
+			String loginError = "Error en el login, no existe el usario '"+username+"' en el sistema";
+			LOGGER.error(loginError);
+			
+			// Traza span para zipkin
+			tracer.currentSpan().tag("error.mensaje", loginError + ": "+ e.getMessage());
+			
+			throw new UsernameNotFoundException(loginError);
 		}		
 	}
 
