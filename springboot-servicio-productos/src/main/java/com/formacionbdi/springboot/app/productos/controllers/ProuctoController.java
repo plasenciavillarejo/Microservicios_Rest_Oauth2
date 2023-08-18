@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.formacionbdi.springboot.app.productos.models.service.IProductoService;
 import com.formacionbdi.springboot.app.shared.library.models.entity.Producto;
 
+import brave.Tracer;
+
 
 @RestController
 public class ProuctoController {
@@ -44,6 +46,10 @@ public class ProuctoController {
 	
 	@Autowired
 	private IProductoService productoService;
+	
+	@Autowired
+	private Tracer trace;
+	
 	
 	/*
 	@GetMapping({"/listar","/"})
@@ -67,6 +73,8 @@ public class ProuctoController {
 		for(Producto p: producto) {
 			p.setPuerto(webServerAppCtxt.getWebServer().getPort());
 		}		
+		
+		trace.currentSpan().tag("Ejemplo.Etiqueta", "PLASENCIA EL ETIQUETAS");
 		return new ResponseEntity<List<Producto>>(producto,HttpStatus.OK);
 	}
 	
