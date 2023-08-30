@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Mono;
@@ -35,6 +37,9 @@ public class GlobalFilters implements GlobalFilter, Ordered {
 		LOGGER.info("Ejecutando el PRE filtro");
 		// Generamos una cabecera con un token al request
 		exchange.getRequest().mutate().headers(h -> h.add("token", "123456"));
+		
+		String tokenAuthorization = getTokenFromRequest(exchange);
+		
 		
 		
 		
@@ -76,4 +81,17 @@ public class GlobalFilters implements GlobalFilter, Ordered {
 		return 10;
 	}
 
+	
+	public String getTokenFromRequest(ServerWebExchange request) {
+		// Obtenemos de la cabecera la authorization
+        String token = request.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+		
+		// Si se cumple viene el token
+		if(StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+			// Retornamos desde el caracter 7 hasta el final que contiene el token eliminadno el -> "Bearer "
+			return token.substring(7);
+		}
+		return null;
+	}
+	
 }

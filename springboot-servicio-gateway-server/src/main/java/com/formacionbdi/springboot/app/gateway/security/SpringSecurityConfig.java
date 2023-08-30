@@ -17,11 +17,12 @@ public class SpringSecurityConfig {
 	@Autowired
 	private JwtAuthenticationFilter authenticationFiler;
 	
+	/*
 	@Bean
     public RequestMatcher customRequestMatcher() {
         return new AntPathRequestMatcher("/api/security/oauth/token");
     }
-	
+	*/
 	@Bean
 	public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
 		http.authorizeExchange()
@@ -32,7 +33,7 @@ public class SpringSecurityConfig {
 					"/api/usuarios/usuarios",
 					"/api/items/ver/{id}/cantidad/{cantidad}",
 					"/api/productos/ver/{id}").permitAll()								
-			.pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ROLE_ADMIN","ROLE_USER")
+			.pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN", "USER")
 			.pathMatchers("/api/productos/**", "/api/items/**", "/api/usuarios/usuarios/**").hasRole("ADMIN")
 			.anyExchange().authenticated()
 			.and()
