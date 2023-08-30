@@ -97,7 +97,7 @@ public class ItemController {
 		   	Esto quiere decir que en las primeras 55 peticiones al fallar se ha ejecutado la clase 'metodoAlternativo' evitando que el proceso falle y no responda a Postman.
 		   	Pero ahora desde otra api se puede realizar 45 llamadas (son las restantes que quedan 55 + 45 = 100 request) que ejecutará correctamente el servicio pero cuando llegue a 100
 		   	de forma directa se ejecutara el circuito abierto y no realizará más 'Request' durante 1 minuto siempre se ejecutara el 'metodoAlternativo'.
-		   	Posteriormente volvera a circuito semi-abierto y tendremos otras 100 request con un umbral del 50% de tolerancia a fallos.
+		   	Posteriormente volvera a circuito semi-abierto y tendremos solo 10 request con un umbral del 50% de tolerancia a fallos.
 		   	
 		   	Ejemplo:
 		   	A este endpoint devolverá todo correcto: http://localhost:8002/ver/2/cantidad/5 (Endpoint A)
@@ -109,9 +109,9 @@ public class ItemController {
 		   	En la peticióin 101 -> Ya no acepta más request, se ha sobrepasado las 100 peticiones con un umbral del 50% en fallo, da igual el endpoint que se ejecute que siempre va por el
 		   		metodoAlternativo();
 		   	
-		   	- Depues de 1 minutos en circuito abierto, vuelve a semi-abierto, esto quiere decir que permite hacer 10 request y la tasa de error es supera el 50% vuelve al corto circuito,
+		   	- Depues de 1 minutos en circuito abierto, vuelve a semi-abierto, esto quiere decir que permite hacer 10 request y la tasa de error supera el 50% vuelve al corto circuito,
 		   	de lo contrario volvemos a estado cerrado.
-		   		- De 10 peticiones hacemos 7 correctas y 3 mal, entonces el umbral supera las peticiones buenas por tanto el estado cerrado vuelve a tener 100 request
+		   		- De 10 peticiones hacemos 7 correctas y 3 mal, entonces el umbral supera las peticiones buenas por tanto el estado cerrado vuelve a tener 100 request.
 		   	
 		   	-Se configura de la siguiente forma
 		   		e -> metodoAlternativo(id,cantidad)
