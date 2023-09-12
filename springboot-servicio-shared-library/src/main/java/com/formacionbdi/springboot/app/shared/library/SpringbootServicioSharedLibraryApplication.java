@@ -1,8 +1,10 @@
 package com.formacionbdi.springboot.app.shared.library;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
 //Este Proyecto no se tiene que levantar ya que solo nos sirve para acceder a el y obtener la Entidades desde cualquier proyecto
 
@@ -13,7 +15,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class SpringbootServicioSharedLibraryApplication {
 
-	/* Como es un proyecto para contener la librerías centralizadas debe comentarse el main
+	/* Como es un proyecto para contener la librerías centralizadas debe comentarse el mainn 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootServicioSharedLibraryApplication.class, args);
 	}

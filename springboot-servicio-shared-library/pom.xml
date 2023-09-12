@@ -15,6 +15,7 @@
 	<description>Proyecto encargado de centralizar todas la librerías y pojos en común</description>
 	<properties>
 		<java.version>11</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -22,11 +23,17 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+		<!-- Dependencias JavaBeans Validation -->
+		<!-- ################################# -->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+
+		<!-- ################################# -->
+		<!-- ################################# -->
+		
 	</dependencies>
 
 <!-- Quitamos el plugin de maven 
