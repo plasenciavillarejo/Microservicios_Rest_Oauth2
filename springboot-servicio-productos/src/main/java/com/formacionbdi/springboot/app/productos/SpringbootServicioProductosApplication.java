@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 //Habilitamos el cliente Eureka de forma esplícita, aunque basta solo con indicar la dependencía en el pom.xml
 @EnableEurekaClient
