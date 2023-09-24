@@ -208,7 +208,7 @@ public class ProuctoController {
 			buscarProducto.setNombre(producto.getNombre());
 			buscarProducto.setPrecio(producto.getPrecio());
 			buscarProducto.setPuerto(webServerAppCtxt.getWebServer().getPort());
-			buscarProducto.setCreateAt(new Date());
+			buscarProducto.setCreateAt(producto.getCreateAt());
 			buscarProducto.setRegion(producto.getRegion());
 		} else if(producto.getNombre() == null) {
 			objetoRespuesta.put("mensaje", "Error al editar el usuario en la base de datos.");
