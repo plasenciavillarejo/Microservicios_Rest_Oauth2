@@ -34,6 +34,18 @@
 		<!-- ################################# -->
 		<!-- ################################# -->
 		
+		<!-- Dependencia para anotar las @JsonIgnoreProperties -->
+		<!-- ################################################# -->
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		
+		<!-- ################################################# -->
+		<!-- ################################################# -->
+		
 	</dependencies>
 
 <!-- Quitamos el plugin de maven 

@@ -45,8 +45,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.formacionbdi.springboot.app.productos.models.service.IProductoService;
-import com.formacionbdi.springboot.app.productos.models.serviceimpl.ProductoServiceImpl;
+import com.formacionbdi.springboot.app.productos.models.service.IRegionService;
+import com.formacionbdi.springboot.app.productos.models.serviceimpl.RegionServiceImpl;
 import com.formacionbdi.springboot.app.shared.library.models.entity.Producto;
+import com.formacionbdi.springboot.app.shared.library.models.entity.Region;
 
 import brave.Tracer;
 
@@ -75,6 +77,9 @@ public class ProuctoController {
 	
 	@Autowired
 	private Tracer trace;
+	
+	@Autowired
+	private IRegionService regionService;
 	
 	
 	/*
@@ -204,6 +209,7 @@ public class ProuctoController {
 			buscarProducto.setPrecio(producto.getPrecio());
 			buscarProducto.setPuerto(webServerAppCtxt.getWebServer().getPort());
 			buscarProducto.setCreateAt(new Date());
+			buscarProducto.setRegion(producto.getRegion());
 		} else if(producto.getNombre() == null) {
 			objetoRespuesta.put("mensaje", "Error al editar el usuario en la base de datos.");
 			return new ResponseEntity<Map<String, Object>>(objetoRespuesta,HttpStatus.INTERNAL_SERVER_ERROR);
@@ -274,14 +280,15 @@ public class ProuctoController {
 	public void borrarFotoProducto(Long id) {
 		Producto producto = productoService.fingById(id);
 		String nombreAnteriorFoto = producto.getFoto();
-
-		Path rutaFotoAnterior = Paths.get("C://Users//maplvijo//Documents//upload").resolve(nombreAnteriorFoto)
-				.toAbsolutePath();
-		File archivoFotoAnterior = rutaFotoAnterior.toFile();
-		if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
-			archivoFotoAnterior.delete();
+		
+		if(nombreAnteriorFoto!= null) {
+			Path rutaFotoAnterior = Paths.get("C://Users//maplvijo//Documents//upload").resolve(nombreAnteriorFoto)
+					.toAbsolutePath();
+			File archivoFotoAnterior = rutaFotoAnterior.toFile();
+			if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+				archivoFotoAnterior.delete();
+			}
 		}
-
 	}
 	
 	// Como se le va a pasar una imagen con extensión se le agrega una expresión regular -> :.+ (Indica que contiene un punto y la extensión)
@@ -319,4 +326,11 @@ public class ProuctoController {
 		return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
 	}
 	
+
+	@GetMapping(value = "/listar/regiones")
+	public ResponseEntity<List<Region>> listarRegiones() {
+		return new ResponseEntity<List<Region>>(regionService.buscarListaRegiones(),HttpStatus.OK);
+	}
+
+
 }
