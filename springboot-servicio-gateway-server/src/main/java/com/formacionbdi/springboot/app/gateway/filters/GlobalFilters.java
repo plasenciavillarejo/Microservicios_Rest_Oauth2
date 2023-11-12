@@ -40,9 +40,13 @@ public class GlobalFilters implements GlobalFilter, Ordered {
 		
 		String tokenAuthorization = getTokenFromRequest(exchange);
 		
-		
-		
-		
+		// Verificar si la ruta coincide con "/images/**"
+	    /*
+		if (exchange.getRequest().getURI().getPath().startsWith("/images/")) {
+	        LOGGER.info("La ruta coincide con /images/**, permitiendo el flujo.");
+	        return chain.filter(exchange);
+	    }
+		*/
 		/* Esto es el POST filter 
 		  Utilizamos programación reactiva con webflux invocamos el operador 'then', esto se ejecuta depues cuando se haya terminado toda la ejecución de todos los filtros y haya finalizado el
 		proceso y obtenamos la respuesta.

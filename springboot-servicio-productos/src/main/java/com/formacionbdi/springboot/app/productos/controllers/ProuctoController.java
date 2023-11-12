@@ -53,7 +53,7 @@ import com.formacionbdi.springboot.app.shared.library.models.entity.Region;
 import brave.Tracer;
 
 // CrossOrigin para conectar con el front de angular
-@CrossOrigin(origins = {"http://localhost:4200"}, allowedHeaders = "*")
+//@CrossOrigin(origins = {"http://localhost:4200"}, allowedHeaders = "*")
 @RestController
 public class ProuctoController {
 
@@ -242,37 +242,38 @@ public class ProuctoController {
 		return productoService.paginador(pageable);
 	}
 	
-	@PostMapping(value ="/upload")
+	@PostMapping(value = "/upload")
 	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
 		Map<String, Object> objetoRespuesta = new HashMap<>();
 		Producto producto = productoService.fingById(id);
-		
-		if(!file.isEmpty()) {
+
+		if (!file.isEmpty()) {
 			String nombreArchivo = UUID.randomUUID().toString() + "_" + file.getOriginalFilename().replace(" ", "");
-			Path rutaArchivo = Paths.get("C://Users//maplvijo//Documents//upload").resolve(nombreArchivo).toAbsolutePath();
+			Path rutaArchivo = Paths.get("C://Users//maplvijo//Documents//upload").resolve(nombreArchivo)
+					.toAbsolutePath();
 			try {
 				Files.copy(file.getInputStream(), rutaArchivo);
 			} catch (IOException e) {
-				LOGGER.error("Error al subir la imágen", e.getMessage(),e);
+				LOGGER.error("Error al subir la imágen", e.getMessage(), e);
 				objetoRespuesta.put("mensaje", "Error al subir la imágen".concat(e.getCause().getMessage()));
-				return new ResponseEntity<Map<String, Object>>(objetoRespuesta,HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<Map<String, Object>>(objetoRespuesta, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			if(producto.getFoto() != null) {
+			if (producto.getFoto() != null) {
 				borrarFotoProducto(id);
 			}
-			
+
 			producto.setFoto(nombreArchivo);
-			
-			// Como el puerto no puede ser nulo y se agrega de forma automática lo que tengo que hacer es volver asignarlo
-			if(producto.getPuerto() == null) {
+
+			// Como el puerto no puede ser nulo y se agrega de forma automática lo que tengo
+			// que hacer es volver asignarlo
+			if (producto.getPuerto() == null) {
 				producto.setPuerto(webServerAppCtxt.getWebServer().getPort());
 			}
 			productoService.guardarProducto(producto);
-			
+
 			objetoRespuesta.put("producto", producto);
 			objetoRespuesta.put("mensaje", "Se ha subido correctamente la imágen: ".concat(nombreArchivo));
 		}
-		
 		return new ResponseEntity<Map<String, Object>>(objetoRespuesta, HttpStatus.CREATED);
 	}
 	
@@ -308,25 +309,25 @@ public class ProuctoController {
 			rutaArchivo = Paths.get("src/main/resources/static/images").resolve("user.svg").toAbsolutePath();
 			try {
 				Producto busquedaProducto = productoService.findByFoto(nombreImagen);
-				busquedaProducto.setFoto("");
-				busquedaProducto.setPuerto(webServerAppCtxt.getWebServer().getPort());
-				productoService.guardarProducto(busquedaProducto);
+				if(busquedaProducto != null) {
+					busquedaProducto.setFoto("");
+					busquedaProducto.setPuerto(webServerAppCtxt.getWebServer().getPort());
+					productoService.guardarProducto(busquedaProducto);
+				}
 				recurso = new UrlResource(rutaArchivo.toUri());
 			} catch (MalformedURLException e) {
+				LOGGER.error("Error no se pudo cargar la imágen :" + nombreImagen);
 				LOGGER.error(e.getLocalizedMessage());
 			}
-			LOGGER.error("Error no se pudo cargar la imágen :" + nombreImagen);
-		}
-		
+			LOGGER.error("Se ha cargado correctamente la imágen :" + nombreImagen);
+		}		
 		// Ahora vamos a pasar la cabecera HttpHeaders para forzar que se pueda descargar el attachment.
 		HttpHeaders cabecera = new HttpHeaders();
 		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ recurso.getFilename()+ "\"");
-		
-		
+			
 		return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
 	}
 	
-
 	@GetMapping(value = "/listar/regiones")
 	public ResponseEntity<List<Region>> listarRegiones() {
 		return new ResponseEntity<List<Region>>(regionService.buscarListaRegiones(),HttpStatus.OK);

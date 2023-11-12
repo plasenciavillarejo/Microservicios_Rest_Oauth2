@@ -8,8 +8,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import com.formacionbdi.springboot.app.oauth.servicesimpl.CustomAuthenticationProvider;
 
@@ -39,7 +41,7 @@ public class SpringSecurityConfig {
 	private CustomAuthenticationProvider customAuthenticatinProvider;
 	
 	@Bean
-	public static BCryptPasswordEncoder passwordEncoder() {
+	static BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 	
@@ -64,8 +66,8 @@ public class SpringSecurityConfig {
 	}
 	*/
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager(); 
     }
-    
+
 }

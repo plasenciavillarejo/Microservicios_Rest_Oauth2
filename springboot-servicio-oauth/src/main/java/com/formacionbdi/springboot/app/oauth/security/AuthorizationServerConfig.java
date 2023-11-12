@@ -3,6 +3,7 @@ package com.formacionbdi.springboot.app.oauth.security;
 import java.util.Arrays;
 import java.util.Base64;
 
+import org.bouncycastle.crypto.tls.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -19,6 +20,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+
+import com.formacionbdi.springboot.app.oauth.config.JwtPasswordConfig;
 
 
 //Por si cambiamos algun valor dentro de el properties para que lo coja en caliente
@@ -58,7 +61,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 		// 1.- La idea es que sea público para que cualquier persona pueda acceder a esta ruta para generar el token /oauth/token
-		security.tokenKeyAccess("permitAll")
+		security.tokenKeyAccess("permitAll()")
 		// 2.- Se encarga de validar el token mediante Authenticacion
 		.checkTokenAccess("isAuthenticated()");
 	}
@@ -130,19 +133,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		// 3.- Configuramos el acceso para que sea de tipo JWTT
 		.accessTokenConverter(accessTokenConverter())
 		// 4.- Añadimos la cadena de tokens creada adicionalmente desde la clase InfoAdicionalToken
-		.tokenEnhancer(tokenEnhancerChain);
-		
+		.tokenEnhancer(tokenEnhancerChain);	
 	}
 
 	@Bean
-	public JwtTokenStore tokenStore() {
+	JwtTokenStore tokenStore() {
 		// Recibe como argumento el accessTokenConverter()
 		return new JwtTokenStore(accessTokenConverter());
 	}
 	
 	@Bean
-	public JwtAccessTokenConverter accessTokenConverter() {
-		
+	JwtAccessTokenConverter accessTokenConverter() {
 		String keySecret = "algun_codigo_secreto_123456";
 		if(!keySecretAuthorization.isEmpty()) {
 			keySecret = keySecretAuthorization;
@@ -151,6 +152,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
 		// Creamos un código secreto para firmar el token, despues se utilizar en el servidor de recursos para validar el token si es correcto para dar acceso a los recursos protegidos.
 		tokenConverter.setSigningKey(Base64.getEncoder().encodeToString(keySecret.getBytes()));
+		//tokenConverter.setSigningKey(JwtPasswordConfig.RSA_PRIVADA);
+		//tokenConverter.setVerifierKey(JwtPasswordConfig.RSA_PUBLICA);
 		return tokenConverter;
 	}
 	
