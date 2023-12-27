@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -39,7 +40,7 @@ public class SpringSecurityConfig {
 	  CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration corsConfig = new CorsConfiguration();
 	    corsConfig.setAllowedOriginPatterns(Arrays.asList("*"));
-	    corsConfig.setAllowedMethods(Arrays.asList("POST","GET","PUT","DELETE","OPTIONS"));
+	    corsConfig.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
 	    corsConfig.setAllowCredentials(true);
 	    corsConfig.setAllowedHeaders(Arrays.asList("Authorization","Content-Type"));
 	    
@@ -57,18 +58,20 @@ public class SpringSecurityConfig {
 	
 	@Bean
 	WebSecurityCustomizer webSecurityCustomizar() {
-		return (web) -> web.ignoring().antMatchers("/images/**");
+		return (web) -> web.ignoring().antMatchers(HttpMethod.GET,"/images/**");
 	}
-		
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("classpath:/static/images/");
-    }
 	
+	/*
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+      registry.addResourceHandler("/images/**")
+              .addResourceLocations("classpath:/static/images/");
+  }
+	*/
 	@Bean
 	SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
         http.authorizeExchange(path ->
                 path.pathMatchers("/api/security/oauth/**").permitAll()
+                .pathMatchers("/images/**").permitAll() // Recurso dentro de Gateway
                 .pathMatchers(HttpMethod.GET,
                 		"/api/productos/listar",
                         "/api/listar/page/",
@@ -78,7 +81,7 @@ public class SpringSecurityConfig {
                         "/api/productos/ver/{id}",
                         "/api/productos/listar/page/{pagina}",
                         "/api/productos/verImagen/{nombreFoto:.+}",
-                        "/api/productos/images/**").permitAll()
+                        "/api/productos/verImagen/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN", "USER")
                 .pathMatchers("/api/productos/**", "/api/items/**", "/api/usuarios/usuarios/**").hasRole("ADMIN")
                 .anyExchange().authenticated())

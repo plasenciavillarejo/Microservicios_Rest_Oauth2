@@ -36,7 +36,7 @@ public class GlobalFilters implements GlobalFilter, Ordered {
 		
 		LOGGER.info("Ejecutando el PRE filtro");
 		// Generamos una cabecera con un token al request
-		exchange.getRequest().mutate().headers(h -> h.add("token", "123456"));
+		//exchange.getRequest().mutate().headers(h -> h.add("token", "123456"));
 		
 		String tokenAuthorization = getTokenFromRequest(exchange);
 		
