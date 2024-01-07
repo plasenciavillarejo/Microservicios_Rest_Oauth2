@@ -10,4 +10,8 @@ public interface IFacturaService {
 
   public Optional<Factura> findById(@Param("id") Long id);
   
+  public Factura saveFactura(Factura factura);
+  
+  public void deleteFactura(Factura factura);
+  
 }

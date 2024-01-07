@@ -22,4 +22,16 @@ public class FacturaServiceImpl implements IFacturaService {
     return facturaDao.findById(id);
   }
 
+  @Override
+  @Transactional
+  public Factura saveFactura(Factura factura) {
+    return facturaDao.save(factura);
+  }
+
+  @Override
+  @Transactional
+  public void deleteFactura(Factura factura) {
+    facturaDao.delete(factura);
+  }
+
 }
