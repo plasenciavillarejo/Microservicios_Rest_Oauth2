@@ -81,7 +81,8 @@ public class SpringSecurityConfig {
                         "/api/productos/ver/{id}",
                         "/api/productos/listar/page/{pagina}",
                         "/api/productos/verImagen/{nombreFoto:.+}",
-                        "/api/productos/verImagen/**").permitAll()
+                        "/api/productos/verImagen/**",
+                        "/api/productos/listar/factura/{id}").permitAll()
                 .pathMatchers(HttpMethod.GET, "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN", "USER")
                 .pathMatchers("/api/productos/**", "/api/items/**", "/api/usuarios/usuarios/**").hasRole("ADMIN")
                 .anyExchange().authenticated())
