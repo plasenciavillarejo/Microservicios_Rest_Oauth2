@@ -33,7 +33,10 @@ INSERT INTO productos (nombre, precio, create_at, region_id) VALUES ('Reebok',20
 INSERT INTO productos (nombre, precio, create_at, region_id) VALUES ('Guess',1500, NOW(), 5);
 
 
-
+INSERT INTO facturas (descripcion, observacion, create_at) VALUES ('Factura equipos de oficina','Factura de cobro en equipos de oficina para la Region de Murcia',NOW());
+INSERT INTO facturas_items (cantidad,producto_id,factura_id) VALUES (1,1,1);
+INSERT INTO facturas_items (cantidad,producto_id,factura_id) VALUES (3,2,1);
+INSERT INTO facturas_items (cantidad,producto_id,factura_id) VALUES (2,5,1);
 
 
 

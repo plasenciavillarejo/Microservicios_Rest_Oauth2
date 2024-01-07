@@ -32,7 +32,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +43,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.formacionbdi.springboot.app.productos.models.service.IFacturaService;
 import com.formacionbdi.springboot.app.productos.models.service.IProductoService;
 import com.formacionbdi.springboot.app.productos.models.service.IRegionService;
-import com.formacionbdi.springboot.app.productos.models.serviceimpl.RegionServiceImpl;
+import com.formacionbdi.springboot.app.shared.library.models.entity.Factura;
 import com.formacionbdi.springboot.app.shared.library.models.entity.Producto;
 import com.formacionbdi.springboot.app.shared.library.models.entity.Region;
 
@@ -81,6 +81,8 @@ public class ProuctoController {
 	@Autowired
 	private IRegionService regionService;
 	
+	@Autowired
+	private IFacturaService facturaService;
 	
 	/*
 	@GetMapping({"/listar","/"})
@@ -254,9 +256,9 @@ public class ProuctoController {
 			try {
 				Files.copy(file.getInputStream(), rutaArchivo);
 			} catch (IOException e) {
-				LOGGER.error("Error al subir la imágen", e.getMessage(), e);
+				LOGGER.error("Error al subir la imágen {}", e.getMessage(), e);
 				objetoRespuesta.put("mensaje", "Error al subir la imágen".concat(e.getCause().getMessage()));
-				return new ResponseEntity<Map<String, Object>>(objetoRespuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(objetoRespuesta, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			if (producto.getFoto() != null) {
 				borrarFotoProducto(id);
@@ -294,7 +296,7 @@ public class ProuctoController {
 	
 	// Como se le va a pasar una imagen con extensión se le agrega una expresión regular -> :.+ (Indica que contiene un punto y la extensión)
 	@GetMapping(value= "/verImagen/{nombreFoto:.+}")
-	public ResponseEntity<Resource> verImagen(@PathVariable(value = "nombreFoto") String nombreImagen) {
+	public ResponseEntity<Object> verImagen(@PathVariable(value = "nombreFoto") String nombreImagen) throws IOException {
 		
 		Path rutaArchivo = Paths.get("C://Users//maplvijo//Documents//upload").resolve(nombreImagen).toAbsolutePath();
 		Resource recurso = null;
@@ -325,13 +327,19 @@ public class ProuctoController {
 		HttpHeaders cabecera = new HttpHeaders();
 		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ recurso.getFilename()+ "\"");
 			
-		return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
+		return new ResponseEntity<>(recurso.getURL(), cabecera, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/listar/regiones")
 	public ResponseEntity<List<Region>> listarRegiones() {
-		return new ResponseEntity<List<Region>>(regionService.buscarListaRegiones(),HttpStatus.OK);
+		return new ResponseEntity<>(regionService.buscarListaRegiones(),HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/listar/factura/{id}")
+	public ResponseEntity<List<Factura>> listarFacturaPorId(@PathVariable(value = "id") Long id) {
+	  List<Factura> listaFacturas = facturaService.findById(id).stream().collect(Collectors.toList());
+	  return new ResponseEntity<>(listaFacturas, HttpStatus.OK);
+	}
+	
 
 }
