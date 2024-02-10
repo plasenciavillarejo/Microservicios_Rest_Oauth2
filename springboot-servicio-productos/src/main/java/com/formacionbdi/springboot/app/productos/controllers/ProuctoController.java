@@ -111,8 +111,6 @@ public class ProuctoController {
 		return new ResponseEntity<List<Producto>>(producto,HttpStatus.OK);
 	}
 	
-	
-	
 	@GetMapping("/ver/{id}")
 	public ResponseEntity<?> detalle(@PathVariable Long id) {
 		Producto producto = null;
@@ -165,7 +163,7 @@ public class ProuctoController {
 	 */
 	@PostMapping(value = "/crear")
 	//@ResponseStatus(value = HttpStatus.CREATED)
-	public ResponseEntity<?> crear(@Valid @RequestBody Producto producto, BindingResult bindigResult) {
+	public ResponseEntity<Object> crear(@Valid @RequestBody Producto producto, BindingResult bindigResult) {
 		Map<String, Object> objetoRespuesta = new HashMap<>();
 		
 		if(bindigResult.hasErrors()) {
@@ -188,15 +186,15 @@ public class ProuctoController {
 			
 			objetoRespuesta.put("errors", listaErrores);
 					
-			return new ResponseEntity<Map<String, Object>>(objetoRespuesta,HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(objetoRespuesta,HttpStatus.BAD_REQUEST);
 		}else if(producto.getNombre() == null) {
 			objetoRespuesta.put("mensaje", "Error al crear el usuario en la base de datos.");
-			return new ResponseEntity<Map<String, Object>>(objetoRespuesta,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(objetoRespuesta,HttpStatus.INTERNAL_SERVER_ERROR);
 		} else if(producto.getCreateAt() == null) {
 			producto.setCreateAt(new Date());
 		}
 		productoService.guardarProducto(producto);
-		return new ResponseEntity<Producto>(producto, HttpStatus.CREATED);
+		return new ResponseEntity<>(producto, HttpStatus.CREATED);
 				
 	}
 	
@@ -318,10 +316,10 @@ public class ProuctoController {
 				}
 				recurso = new UrlResource(rutaArchivo.toUri());
 			} catch (MalformedURLException e) {
-				LOGGER.error("Error no se pudo cargar la imágen :" + nombreImagen);
+				LOGGER.error("Error no se pudo cargar la imágen: {}",  nombreImagen);
 				LOGGER.error(e.getLocalizedMessage());
 			}
-			LOGGER.error("Se ha cargado correctamente la imágen :" + nombreImagen);
+			LOGGER.error("Se ha cargado correctamente la imágen: {}", nombreImagen);
 		}		
 		// Ahora vamos a pasar la cabecera HttpHeaders para forzar que se pueda descargar el attachment.
 		HttpHeaders cabecera = new HttpHeaders();
@@ -335,12 +333,19 @@ public class ProuctoController {
 		return new ResponseEntity<>(regionService.buscarListaRegiones(),HttpStatus.OK);
 	}
 
+	// EndPoints para las facturas
 	@GetMapping(value = "/listar/factura/{id}")
 	public ResponseEntity<List<Factura>> listarFacturaPorId(@PathVariable(value = "id") Long id) {
 	  List<Factura> listaFacturas = facturaService.findById(id).stream().collect(Collectors.toList());
 	  return new ResponseEntity<>(listaFacturas, HttpStatus.OK);
 	}
 	
-	
+	@DeleteMapping(value = "/facturas/{id}")
+	public ResponseEntity<Object> borrarFacturas(@PathVariable Long id) {
+	  Map<String, Object> objetoRespuesta = new HashMap<>();
+	  facturaService.deleteFactura(id); 
+	  objetoRespuesta.put("mensaje", "La factura ha sido eliminada con éxito.");
+	  return new ResponseEntity<>(objetoRespuesta,HttpStatus.NO_CONTENT);
+	}
 	
 }

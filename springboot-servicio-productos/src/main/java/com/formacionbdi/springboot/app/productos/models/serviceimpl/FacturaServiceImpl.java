@@ -30,8 +30,8 @@ public class FacturaServiceImpl implements IFacturaService {
 
   @Override
   @Transactional
-  public void deleteFactura(Factura factura) {
-    facturaDao.delete(factura);
+  public void deleteFactura(Long id) {
+    facturaDao.deleteById(id);
   }
 
 }

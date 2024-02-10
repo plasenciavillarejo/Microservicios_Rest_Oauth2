@@ -12,6 +12,6 @@ public interface IFacturaService {
   
   public Factura saveFactura(Factura factura);
   
-  public void deleteFactura(Factura factura);
+  public void deleteFactura(Long id);
   
 }
