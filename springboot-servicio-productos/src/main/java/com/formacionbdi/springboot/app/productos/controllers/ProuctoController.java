@@ -348,4 +348,10 @@ public class ProuctoController {
 	  return new ResponseEntity<>(objetoRespuesta,HttpStatus.NO_CONTENT);
 	}
 	
+	@GetMapping(value = "/factura/filtrar-productos/{nombre}")
+	public ResponseEntity<List<Producto>> busquedaAutocompleteProducto(@PathVariable("nombre") String nombre) {
+	  List<Producto> productos = productoService.findByNombreContainingIgnoreCase(nombre);
+	   return new ResponseEntity<>(productos, HttpStatus.OK);
+	}
+	
 }

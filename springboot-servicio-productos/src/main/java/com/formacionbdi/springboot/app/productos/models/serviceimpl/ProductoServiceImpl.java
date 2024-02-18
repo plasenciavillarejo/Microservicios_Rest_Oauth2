@@ -49,8 +49,15 @@ public class ProductoServiceImpl implements IProductoService{
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Producto findByFoto(String nombreFoto) {
 		return productoDao.findByFoto(nombreFoto);
 	}
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<Producto> findByNombreContainingIgnoreCase(String nombre) {
+    return productoDao.findByNombreContainingIgnoreCase(nombre);
+  }
 
 }

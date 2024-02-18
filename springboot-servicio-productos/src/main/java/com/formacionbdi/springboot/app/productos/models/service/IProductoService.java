@@ -21,4 +21,6 @@ public interface IProductoService {
 	
 	public Producto findByFoto(String nombreFoto);
 	
+	public List<Producto> findByNombreContainingIgnoreCase(String nombre);
+	
 }
