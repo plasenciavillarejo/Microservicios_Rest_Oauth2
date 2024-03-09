@@ -354,4 +354,13 @@ public class ProuctoController {
 	   return new ResponseEntity<>(productos, HttpStatus.OK);
 	}
 	
+	
+	@PostMapping(value = "/factura/crear")
+	public ResponseEntity<Factura> crearFactura(@RequestBody Factura factura) {
+	  
+	  factura.setCreateAte(new Date());
+	  
+	  return new ResponseEntity<>(facturaService.saveFactura(factura), HttpStatus.CREATED);
+	}
+	
 }
